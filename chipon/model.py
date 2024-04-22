@@ -2,10 +2,12 @@ from typing import List
 
 import numpy as np
 import torch
-from torch import nn
 
-import layers
-from constants import test_bench_template
+import torch.nn as nn
+import torch.ao.nn.quantized as qnn
+
+from . import layers
+from .constants import test_bench_template
 
 
 class Model:
@@ -17,11 +19,22 @@ class Model:
         return '\n'.join(str(layer) for layer in self.layers)
 
     def parse_layers(self):
+        input_scale = None
+        #output_scale = None
         for i, layer in enumerate(self.model):
             if isinstance(layer, nn.Linear):
-                self.layers.append(layers.Linear.layer_from(layer, i))
+                print(f"Adding linear layer {layer}")
+                self.layers.append(layers.Linear.from_pytorch_layer(layer, i))
+            elif isinstance(layer, qnn.Linear):
+                print(f"Adding quantized linear layer {layer}")
+                self.layers.append(layers.Linear.from_quantized_pytorch_layer(layer, i, input_scale))
             elif isinstance(layer, nn.ReLU):
+                print(f"Adding ReLU layer {layer}")
                 self.layers.append(layers.ReLU(self.model[i - 1].out_features, i))
+            elif isinstance(layer, qnn.Quantize):
+                input_scale = layer.scale[0]
+            elif isinstance(layer, qnn.DeQuantize):
+                pass # output_scale = layer.scale[0]
             else:
                 raise ValueError(f'Unknown layer type {layer}')
 

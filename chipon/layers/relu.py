@@ -1,6 +1,6 @@
 import numpy as np
 
-from layers.utils import range_to_bits
+from .utils import range_to_bits
 
 
 class ReLU:
