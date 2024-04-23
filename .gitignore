@@ -4,3 +4,5 @@ test.v
 test_tb.v
 data/
 __pycache__
+build/
+*.egg-info/

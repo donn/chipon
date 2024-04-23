@@ -24,7 +24,7 @@ setup(
     packages=find_packages(),
     version=version,
     description="An infrastructure for implementing chip design flows",
-    long_description=open(os.path.join(__dir__, "Readme.md")).read(),
+    long_description=open(os.path.join(__dir__, "README.md")).read(),
     long_description_content_type="text/markdown",
     author="",
     author_email="",
